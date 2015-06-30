@@ -1,9 +1,12 @@
-﻿Public Class Form1
+﻿Public Class CharRecon
+    ' Number of characters in the class, if you want to increase the # of characters
     Private Const NUMBER_OF_CLUSTERS As Integer = 7
+    ' Number of inputs in the ANN
     Private Const VEC_LEN As Integer = 63
+    ' Number of training patterns
     Private Const TRAINING_PATTERNS As Integer = 21
 
-    Private LVQ As LVQ1class
+    Private LVQNew As LVQ
 
     'If you look closely, you can see the letters made out of 1's
     Private A1 As Integer() = New Integer() {0, 0, 1, 1, 0, 0, 0, _
@@ -16,15 +19,7 @@
                                              0, 1, 0, 0, 0, 1, 0, _
                                              1, 1, 1, 0, 1, 1, 1}
 
-    Private A As Integer() = New Integer() {1, 1, 1, 0, 0, 1, 1, _
-                                             0, 1, 0, 0, 0, 1, 0, _
-                                             0, 1, 0, 0, 1, 0, 0, _
-                                             0, 1, 0, 1, 0, 0, 0, _
-                                             0, 1, 1, 0, 0, 0, 0, _
-                                             0, 1, 0, 1, 0, 0, 0, _
-                                             0, 1, 0, 0, 1, 0, 0, _
-                                             0, 1, 0, 0, 0, 1, 0, _
-                                             1, 1, 1, 0, 0, 1, 1}
+
 
     Private B1 As Integer() = New Integer() {1, 1, 1, 1, 1, 1, 0, _
                                              0, 1, 0, 0, 0, 0, 1, _
@@ -225,22 +220,17 @@
                                              0, 1, 0, 0, 1, 0, 0, _
                                              0, 1, 0, 0, 0, 1, 0, _
                                              1, 1, 1, 0, 0, 1, 1}
+    Private charN As Integer()
 
-    Private mFontNames As String() = New String() {"A1", "B1", "C1", "D1", _
-                                                    "E1", "J1", "K1", _
-                                                    "A2", "B2", "C2", "D2", _
-                                                    "E2", "J2", "K2", _
-                                                    "A3", "B3", "C3", "D3", _
-                                                    "E3", "J3", "K3"}
+    Private mFontNames As Char() = New Char() {"A", "B", "C", "D", "E", "J", "K"}
 
     Private Pattern As Integer()() = New Integer(20)() {}
 
     Private Target As Integer() = New Integer() {0, 1, 2, 3, 4, 5, 6, _
                                                  0, 1, 2, 3, 4, 5, 6, _
                                                  0, 1, 2, 3, 4, 5, 6}
-
     Private Sub InitializePatterns()
-        'Insert pattern arrays into Pattern() to make an array of arrays.
+        'Load each character in to a pattern array.
         Pattern(0) = A1
         Pattern(1) = B1
         Pattern(2) = C1
@@ -263,36 +253,30 @@
         Pattern(19) = J3
         Pattern(20) = K3
     End Sub
-
-    Private Sub Button1_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
-                                                                Handles Button1.Click
+    Public Property CharNew()
+        Get
+            Return CharN
+        End Get
+        Set(ByVal value)
+            charN = value
+        End Set
+    End Property
+    Public Sub TrainNetwork()
         Dim i As Integer
-
         InitializePatterns()
-        LVQ = New LVQ1class(NUMBER_OF_CLUSTERS, _
-                            VEC_LEN, TRAINING_PATTERNS, _
-                            Pattern, _
-                            Target)
 
+        ' Define the type of LVQ
+        LVQNew = New LVQ(NUMBER_OF_CLUSTERS, VEC_LEN, TRAINING_PATTERNS, Pattern, Target)
+
+        ' Initializing weights
         For i = 0 To NUMBER_OF_CLUSTERS - 1
-            LVQ.initializeWeights(i, Pattern(i))
-            TextBox1.Text += "Weights for cluster " + CStr(i) + _
-                          " initialized to pattern " + CStr(mFontNames(i)) + _
-                          vbCrLf
-        Next i
+            LVQNew.initializeWeights(i, Pattern(i))
+        Next
 
-        LVQ.trainNetwork()
-        i = LVQ.getCluster(A)
-        TextBox1.Text = "Pattern " + mFontNames(i) + " belongs to cluster " + _
-                       CStr(i) + vbCrLf
-        'For i = 0 To 6
-        '    For j = 0 To 20
-        '        Debug.Print(LVQ.weights(i, j).ToString)
-        '    Next j
-        'Next i
+        ' Train the network
+        LVQNew.trainNetwork()
     End Sub
 
-    Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-
-    End Sub
+    End Function
 End Class
+

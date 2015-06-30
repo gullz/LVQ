@@ -1,5 +1,4 @@
-﻿Public Class LVQ1class
-
+﻿Public Class LVQ
     Private Const DECAY_RATE As Double = 0.96 'About 100 iterations. 
     Private Const MIN_ALPHA As Double = 0.01
     Private Const RADIUS_REDUCTION_POINT As Double = 0.023 'Last 20% of iterations.
