@@ -277,6 +277,7 @@
         LVQNew.trainNetwork()
     End Sub
 
+    Public Function getCharac() As Char
+        Return mFontNames(LVQNew.getCluster(charN))
     End Function
 End Class
-
